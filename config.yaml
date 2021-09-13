@@ -1,0 +1,9 @@
+# etcd server info
+EtcdAddr:     
+  - "localhost:2379"
+
+EtcdUser: ""
+EtcdPassword: ""
+
+ServerAddr: "0.0.0.0:8445"
+

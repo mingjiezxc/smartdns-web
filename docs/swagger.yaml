@@ -1,0 +1,551 @@
+basePath: /v1
+definitions:
+  main.BaseReturn:
+    properties:
+      data:
+        type: object
+      status:
+        type: boolean
+    type: object
+  main.GroupStruct:
+    properties:
+      ip:
+        example:
+        - 192.168.1.1
+        - 2.168.2.1
+        items:
+          type: string
+        type: array
+      name:
+        example: group1
+        type: string
+    type: object
+  main.IPStatus:
+    properties:
+      allowedLoss:
+        type: integer
+      inErrList:
+        type: boolean
+      ip:
+        type: string
+      loss:
+        type: string
+      lost:
+        type: integer
+      ms:
+        items:
+          type: integer
+        type: array
+      msAvg:
+        type: integer
+      ptll:
+        type: integer
+      receiveCount:
+        type: integer
+      sendCount:
+        type: integer
+      updateTime:
+        type: integer
+    type: object
+  main.JobStruct:
+    properties:
+      group:
+        example:
+        - group1
+        - group2
+        items:
+          type: string
+        type: array
+      name:
+        example: job1
+        type: string
+      spec:
+        example: '*/10 * * * * *'
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This is a sample server Petstore server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: https://github.com/mingjiezxc
+  title: Ping Agnet Manager Api
+  version: "1.0"
+paths:
+  /agent:
+    get:
+      consumes:
+      - application/json
+      description: get regedit agent list
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            items:
+              type: string
+            type: array
+        "500":
+          description: redis connect err
+          schema:
+            type: string
+      summary: Agent List
+      tags:
+      - Agent
+  /agent/{agentName}/err/ip:
+    get:
+      consumes:
+      - application/json
+      description: get Agent Ping Err IP List
+      parameters:
+      - description: Agent Name
+        in: path
+        name: agentName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            items:
+              type: string
+            type: array
+        "500":
+          description: redis connect err
+          schema:
+            type: string
+      summary: Agent Ping Err IP List
+      tags:
+      - Agent
+  /agent/{agentName}/ip/{ip}/lastms:
+    get:
+      consumes:
+      - application/json
+      description: get Agent Ping IP Success last ms
+      parameters:
+      - description: Agent Name
+        in: path
+        name: agentName
+        required: true
+        type: string
+      - description: IP
+        in: path
+        name: ip
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: integer
+        "500":
+          description: redis connect err
+          schema:
+            type: string
+      summary: Agent Ping IP Success Last ms
+      tags:
+      - Agent
+  /agent/{agentName}/job:
+    get:
+      consumes:
+      - application/json
+      description: get Agent Job List
+      parameters:
+      - description: Agent Name
+        in: path
+        name: agentName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            items:
+              type: string
+            type: array
+        "500":
+          description: redis connect err
+          schema:
+            type: string
+      summary: Agent Job List
+      tags:
+      - Agent
+  /agent/{agentName}/job/{jobName}:
+    delete:
+      consumes:
+      - application/json
+      description: delete job on Agent JobList
+      parameters:
+      - description: Agent Name
+        in: path
+        name: agentName
+        required: true
+        type: string
+      - description: Job Name
+        in: path
+        name: jobName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: string
+        "500":
+          description: redis connect err
+          schema:
+            type: string
+      summary: Agent Del Job
+      tags:
+      - Agent
+    post:
+      consumes:
+      - application/json
+      description: Add Job to Agent JobList
+      parameters:
+      - description: Agent Name
+        in: path
+        name: agentName
+        required: true
+        type: string
+      - description: Job Name
+        in: path
+        name: jobName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            items:
+              type: string
+            type: array
+        "500":
+          description: redis connect err
+          schema:
+            type: string
+      summary: Agent Add Job
+      tags:
+      - Agent
+  /agent/{agentName}/online:
+    get:
+      consumes:
+      - application/json
+      description: get Agent Online status
+      parameters:
+      - description: Agent Name
+        in: path
+        name: agentName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: online
+          schema:
+            type: string
+        "500":
+          description: offline or redis connect err
+          schema:
+            type: string
+      summary: Agent Online status
+      tags:
+      - Agent
+  /agent/{agentName}/status:
+    get:
+      consumes:
+      - application/json
+      description: get Agent IP Status
+      parameters:
+      - description: Agent Name
+        in: path
+        name: agentName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            additionalProperties:
+              $ref: '#/definitions/main.IPStatus'
+            type: object
+        "500":
+          description: redis connect err
+          schema:
+            type: string
+      summary: Agent IP Status
+      tags:
+      - Agent
+  /ip/group:
+    delete:
+      consumes:
+      - application/json
+      description: Delete IP On Group
+      parameters:
+      - description: Group Struct
+        in: body
+        name: Group
+        required: true
+        schema:
+          $ref: '#/definitions/main.GroupStruct'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: string
+        "500":
+          description: redis connect err
+          schema:
+            type: string
+        "501":
+          description: request data err
+          schema:
+            type: string
+      summary: Delete IP On Group
+      tags:
+      - IP Group
+    get:
+      consumes:
+      - application/json
+      description: Get IPGroup List
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            items:
+              type: string
+            type: array
+        "500":
+          description: redis connect err
+          schema:
+            type: string
+      summary: IPGroup List
+      tags:
+      - IP Group
+    put:
+      consumes:
+      - application/json
+      description: Create IPGroup and Add IP to Group
+      parameters:
+      - description: Group Struct
+        in: body
+        name: Group
+        required: true
+        schema:
+          $ref: '#/definitions/main.GroupStruct'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: string
+        "500":
+          description: redis connect err
+          schema:
+            type: string
+        "501":
+          description: request data err
+          schema:
+            type: string
+      summary: Create IPGroup and Add IP to Group
+      tags:
+      - IP Group
+  /ip/group/{groupName}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete IP Group
+      parameters:
+      - description: Group Name
+        in: path
+        name: groupName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: string
+        "500":
+          description: redis connect err
+          schema:
+            type: string
+      summary: Delete IP Group
+      tags:
+      - IP Group
+    get:
+      consumes:
+      - application/json
+      description: Get IPGroup IP List
+      parameters:
+      - description: Group Name
+        in: path
+        name: groupName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            items:
+              type: string
+            type: array
+        "500":
+          description: redis connect err
+          schema:
+            type: string
+      summary: IPGroup IP List
+      tags:
+      - IP Group
+  /job:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Job
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/main.JobStruct'
+        "500":
+          description: request data err
+          schema:
+            type: string
+        "501":
+          description: redis connect err
+          schema:
+            type: string
+        "502":
+          description: redis connect err
+          schema:
+            type: string
+      summary: Delete Job
+      tags:
+      - Job
+    get:
+      consumes:
+      - application/json
+      description: get Job List
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            items:
+              type: string
+            type: array
+        "500":
+          description: redis connect err
+          schema:
+            type: string
+      summary: Job List
+      tags:
+      - Job
+    post:
+      consumes:
+      - application/json
+      description: Add & Update Job
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/main.JobStruct'
+        "500":
+          description: request data err
+          schema:
+            type: string
+        "501":
+          description: redis connect err
+          schema:
+            type: string
+        "502":
+          description: redis connect err
+          schema:
+            type: string
+      summary: Add & Update Job
+      tags:
+      - Job
+  /job/{jobName}:
+    get:
+      consumes:
+      - application/json
+      description: Get Job Info
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/main.JobStruct'
+        "500":
+          description: redis connect err
+          schema:
+            type: string
+      summary: Get Job Info
+      tags:
+      - Job
+  /ping:
+    get:
+      consumes:
+      - text/plain
+      description: ping
+      responses:
+        "200":
+          description: pong
+          schema:
+            type: strng
+      summary: a ping api
+  /test:
+    post:
+      consumes:
+      - application/json
+      description: test
+      parameters:
+      - description: Group Name
+        in: body
+        name: Name
+        required: true
+        schema:
+          $ref: '#/definitions/main.BaseReturn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: string
+        "500":
+          description: redis connect err
+          schema:
+            type: string
+      summary: test
+swagger: "2.0"
